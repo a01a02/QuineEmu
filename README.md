@@ -29,6 +29,27 @@ examples/: Example programs written in your custom language.
    - Implement networking capabilities within our VM.
    - Provide libraries or frameworks in our custom language for network pramming and server management.
 
+# Testing
+Testing:
+Testing will be of crucial importance given the intricacy and precision required for this project.
+Here's a plan on how we might go about it:
+
+Unit Tests: Create unit tests for each function or method in your system. Ensure that every piece of your system is performing as expected in isolation.
+
+Integration Tests: Once your units are tested independently, ensure that they work correctly when combined. Test your interfaces and interaction between modules.
+
+End-to-end Tests: Once every component of the system has been tested and integrated, test the entire system from start to finish. This should include testing:
+
+Instruction Set:  Verify that all instructions are executed correctly by running extensive assembly language programs.
+
+VM: Run extensive test suites to verify that the VM correctly handles a variety of programs.
+
+Compiler: Create a suite of programs in your high-level language, compile them, and run them on your VM to ensure that every aspect of your language is being correctly translated to assembly and executed on the VM.
+
+Networking Layer: Verify that the VM is capable of correctly sending and receiving network packets through unit tests and by running server programs within the VM.
+
+This rigorous approach to testing will ensure that every component of the system is working correctly individually and when combined into the larger system. Regular execution of these tests throughout the development process can catch bugs early and facilitate easier debugging.
+
 # Steps in Detail
 1. Define the Architecture
    Let's start by Defining the specifications of our virtual machine.
