@@ -9,6 +9,21 @@ VM::VM(size_t memory_size) : memory(memory_size, 0), registers{}, eip(0), eflags
             {0x02, &VM::execute_add},
             {0x03, &VM::execute_sub},
             {0x04, &VM::execute_mul},
+            {0x05, &VM::execute_div},
+            {0x06, &VM::execute_mod},
+            {0x07, &VM::execute_and},
+            {0x08, &VM::execute_or},
+            {0x09, &VM::execute_not},
+            {0x0A, &VM::execute_xor},
+            {0x0B, &VM::execute_shl},
+            {0x0C, &VM::execute_shr},
+            {0x0D, &VM::execute_jmp},
+            {0x0E, &VM::execute_jz},
+            {0x0F, &VM::execute_jnz},
+            {0x10, &VM::execute_call},
+            {0x11, &VM::execute_ret},
+            {0x12, &VM::execute_push},
+            {0x13, &VM::execute_pop},
             // Include other opcodes and their handlers as and when defined.
     };
     init_memory_segments(memory_size);
@@ -181,6 +196,62 @@ void VM::execute_pop() {
 
     if (reg_index < NUM_REGISTERS) {
         registers[reg_index] = memory[--registers[SP]];
+    }
+}
+
+void VM::execute_and() {
+    uint8_t reg_index_1 = fetch();
+    uint8_t reg_index_2 = fetch();
+
+    if (reg_index_1 < NUM_REGISTERS && reg_index_2 < NUM_REGISTERS) {
+        uint32_t result = registers[reg_index_1] & registers[reg_index_2];
+        registers[reg_index_1] = result;
+    }
+}
+
+void VM::execute_or() {
+    uint8_t reg_index_1 = fetch();
+    uint8_t reg_index_2 = fetch();
+
+    if (reg_index_1 < NUM_REGISTERS && reg_index_2 < NUM_REGISTERS) {
+        uint32_t result = registers[reg_index_1] | registers[reg_index_2];
+        registers[reg_index_1] = result;
+    }
+}
+
+void VM::execute_not() {
+    uint8_t reg_index = fetch();
+
+    if (reg_index < NUM_REGISTERS) {
+        registers[reg_index] = ~registers[reg_index];
+    }
+}
+
+void VM::execute_xor() {
+    uint8_t reg_index_1 = fetch();
+    uint8_t reg_index_2 = fetch();
+
+    if (reg_index_1 < NUM_REGISTERS && reg_index_2 < NUM_REGISTERS) {
+        uint32_t result = registers[reg_index_1] ^ registers[reg_index_2];
+        registers[reg_index_1] = result;
+    }
+}
+
+void VM::execute_shl() {
+    uint8_t reg_index = fetch();
+    uint8_t shift_count = fetch();
+
+    if (reg_index < NUM_REGISTERS) {
+        registers[reg_index] <<= shift_count;
+    }
+}
+
+void VM::execute_shr() {
+    uint8_t reg_index = fetch();
+    uint8_t shift_count = fetch();
+
+    if (reg_index < NUM_REGISTERS) {
+        registers[reg_index] >>= shift_count;
     }
 }
 

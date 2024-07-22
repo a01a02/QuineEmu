@@ -83,6 +83,13 @@ private:
     void execute_push();
     void execute_pop();
     // ... Other opcode handlers may be needed.
+    void execute_and();
+    void execute_or();
+    void execute_not();
+    void execute_xor();
+    void execute_shl();
+    void execute_shr();
+
 
     // Load a memory segment
     void load_segment(uint32_t base, uint32_t limit, Segment& segment);
