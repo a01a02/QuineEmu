@@ -7,16 +7,23 @@
 
 // Constructor definition
 VM::VM(size_t memory_size) : memory(memory_size, 0), registers{}, eip(0), eflags(0), halted(false) {
+    opcode_handlers = {
+            {0x01, &VM::execute_mov},
+            {0x02, &VM::execute_add},
+            {0x03, &VM::execute_sub},
+            {0x04, &VM::execute_mul}
+            // Include other opcodes and their handlers as and when defined.
+    };
     init_memory_segments(memory_size);
-
 }
 
 void:: VM::init_memory_segments(size_t memory_size) {
-    // init memory segments
+    load_segment(0, memory_size, data_segment);
 }
 
 void VM::load_program(const std::vector<uint8_t>& program) {
-    // load the program into memory
+    std::copy(program.begin(), program.end(), memory.begin() + data_segment.base);
+    eip = data_segment.base; // Set the instruction pointer to the start of the program.
 }
 
 void VM::execute() {
@@ -26,8 +33,8 @@ void VM::execute() {
 }
 
 uint8_t VM::fetch() {
-    // fetch from memory based on eip and increment eip
-    return 0;
+    uint8_t opcode = memory[eip++];
+    return opcode;
 }
 
 void VM::decode_and_execute() {
@@ -44,55 +51,128 @@ void VM::decode_and_execute() {
 }
 
 void VM::execute_mov() {
-    // implement the MOV operation
+    uint8_t reg_index_1 = fetch();
+    uint8_t reg_index_2 = fetch();
+
+    if (reg_index_1< NUM_REGISTERS && reg_index_2 < NUM_REGISTERS) {
+        registers[reg_index_1] = registers[reg_index_2]; // Copy the value from one register to another
+    }
 }
 
 void VM::execute_add() {
-    // implement the ADD operation
+    uint8_t reg_index_1 = fetch();
+    uint8_t reg_index_2 = fetch();
+
+    if (reg_index_1 < NUM_REGISTERS && reg_index_2 < NUM_REGISTERS) {
+        uint32_t result = registers[reg_index_1] + registers[reg_index_2];
+        registers[reg_index_1] = result;
+    }
 }
 
 void VM::execute_sub() {
-    // implement the SUB operation
+    uint8_t reg_index_1 = fetch();
+    uint8_t reg_index_2 = fetch();
+
+    if (reg_index_1 < NUM_REGISTERS && reg_index_2 < NUM_REGISTERS) {
+        uint32_t result = registers[reg_index_1] - registers[reg_index_2];
+        registers[reg_index_1] = result;
+    }
 }
 
 void VM::execute_mul() {
-    // implement the MUL operation
+    uint8_t reg_index_1 = fetch();
+    uint8_t reg_index_2 = fetch();
+
+    if (reg_index_1 < NUM_REGISTERS && reg_index_2 < NUM_REGISTERS) {
+        uint32_t result = registers[reg_index_1] * registers[reg_index_2];
+        registers[reg_index_1] = result;
+    }
 }
 
 void VM::execute_div() {
-    // implement the DIV operation
+    uint8_t reg_index_1 = fetch();
+    uint8_t reg_index_2 = fetch();
+
+    if (reg_index_1 < NUM_REGISTERS && reg_index_2 < NUM_REGISTERS) {
+        if (registers[reg_index_2] == 0) {
+            throw std::runtime_error("Divide by zero error.");
+        }
+        uint32_t result = registers[reg_index_1] / registers[reg_index_2];
+        registers[reg_index_1] = result;
+    }
 }
 
 void VM::execute_mod() {
-    // implement the MOD operation
+    uint8_t reg_index_1 = fetch();
+    uint8_t reg_index_2 = fetch();
+
+    if (reg_index_1 < NUM_REGISTERS && reg_index_2 < NUM_REGISTERS) {
+        uint32_t result = registers[reg_index_1] % registers[reg_index_2];
+        registers[reg_index_1] = result;
+    }
 }
 
 void VM::execute_jmp() {
-    // implement the JMP operation
+    uint8_t reg_index = fetch();
+
+    if (reg_index < NUM_REGISTERS) {
+        eip = registers[reg_index];
+    }
 }
 
 void VM::execute_jz() {
-    // implement the JZ operation
+    uint8_t reg_index = fetch();
+
+    if (reg_index < NUM_REGISTERS) {
+        if (eflags == 0) {
+            eip = registers[reg_index];
+        }
+    }
 }
 
 void VM::execute_jnz() {
-    // implement the JNZ operation
+    uint8_t reg_index = fetch();
+
+    if (reg_index < NUM_REGISTERS) {
+        if (eflags != 0) {
+            eip = registers[reg_index];
+        }
+    }
 }
 
 void VM::execute_call() {
-    // implement the CALL operation
+    uint8_t reg_index = fetch();
+
+    if (reg_index < NUM_REGISTERS) {
+        memory.push_back(eip);
+        eip = registers[reg_index];
+    }
 }
 
 void VM::execute_ret() {
-    // implement the RET operation
+    if (!memory.empty()) {
+        eip = memory.back();
+        memory.pop_back();
+    }
 }
 
 void VM::execute_push() {
-    // implement the PUSH operation
+    uint8_t reg_index = fetch();
+
+    if (reg_index < NUM_REGISTERS) {
+        memory.push_back(registers[reg_index]);
+    }
 }
 
 void VM::execute_pop() {
-    // implement the POP operation
+    if (!memory.empty()) {
+        uint8_t reg_index = fetch();
+
+        if (reg_index < NUM_REGISTERS) {
+            registers[reg_index] = memory.back();
+            memory.pop_back();
+        }
+    }
 }
 
 void VM::load_segment(uint32_t base, uint32_t limit, VM::Segment &segment) {
