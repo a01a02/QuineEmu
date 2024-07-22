@@ -60,7 +60,7 @@ private:
     std::map<uint8_t, OpcodeHandler> opcode_handlers;
 
     // Fetch the instruction's opcode
-    uint_t fetch();
+    uint8_t fetch();
     // Decode and execute the instruction
     void decode_and_execute();
 
