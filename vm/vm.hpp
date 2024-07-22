@@ -7,6 +7,8 @@
 
 // Number of registers (or however many you need)
 constexpr size_t NUM_REGISTERS = 8;
+// Stack pointer index
+constexpr uint8_t SP = 8;
 // Enumeration representing each register
 enum class Register {
     EAX,
