@@ -8,4 +8,5 @@ include_directories(vm)
 
 add_executable(QuineEmu
         main.cpp
-        vm/vm.hpp)
+        vm/vm.hpp
+        vm/vm.cpp)

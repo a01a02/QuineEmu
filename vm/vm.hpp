@@ -5,6 +5,8 @@
 #include <map>
 #include <functional>
 
+// Number of registers (or however many you need)
+constexpr size_t NUM_REGISTERS = 8;
 // Enumeration representing each register
 enum class Register {
     EAX,
@@ -15,7 +17,7 @@ enum class Register {
     EDI,
     EBP,
     ESP,
-    NUM_REGISTERS // Total number of registers
+    NUM_REGISTERS = ::NUM_REGISTERS // Total number of registers
 };
 
 class VM {
@@ -43,7 +45,7 @@ private:
     // VM's main memory
     std::vector<uint8_t> memory;
     // Array of CPU registers
-    std::array<uint32_t, static_cast<size_t>(Register::NUM_REGISTERS)> registers;
+    std::array<uint32_t, NUM_REGISTERS> registers;
     uint32_t eip = 0; // Instruction Pointer
     uint32_t eflags = 0; // Flags Register
     // Halt flag - VM stops execution when this is set
